@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Claude Code Skills — How they work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="deck" aria-label="Slide deck">
+
+    <section class="slide is-active" data-theme="dark" data-step="0">
+      <div class="bg-grid"></div>
+      <header class="topbar">
+        <div class="pill">Claude Code</div>
+        <div class="pill subtle">Skills</div>
+      </header>
+      <div class="content">
+        <h1 class="reveal">Claude Code <span class="accent">Skills</span></h1>
+        <p class="lead reveal" style="--d: 80ms">A practical mental model for extending Claude Code with reusable workflows.</p>
+        <div class="meta reveal" style="--d: 140ms">
+          <div class="meta-item"><span class="k">Goal</span><span class="v">Be faster, more consistent, less forgetful</span></div>
+          <div class="meta-item"><span class="k">Format</span><span class="v">Prompt templates with guardrails</span></div>
+          <div class="meta-item"><span class="k">Use</span><span class="v">Invoke via <code>/&lt;skill&gt;</code> or auto-trigger rules</span></div>
+        </div>
+      </div>
+      <footer class="footer">Press <kbd>→</kbd> / <kbd>Space</kbd> · <kbd>Esc</kbd> overview</footer>
+    </section>
+
+    <section class="slide" data-theme="light" data-step="1">
+      <header class="topbar">
+        <div class="pill">What is a skill?</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">A <span class="accent">skill</span> is a reusable workflow</h2>
+        <div class="cols">
+          <div class="card reveal" style="--d: 80ms">
+            <h3>Think “macro”</h3>
+            <p>Encodes the steps you always repeat: what to inspect, what to output, what to avoid.</p>
+          </div>
+          <div class="card reveal" style="--d: 140ms">
+            <h3>Think “policy”</h3>
+            <p>Hard requirements (e.g., don’t run risky commands, don’t create docs) baked into the flow.</p>
+          </div>
+          <div class="card reveal" style="--d: 200ms">
+            <h3>Think “interface”</h3>
+            <p>A short name + a trigger = predictable behavior across sessions and projects.</p>
+          </div>
+        </div>
+        <div class="callout reveal" style="--d: 260ms">
+          <strong>Outcome:</strong> higher quality outputs with less prompting.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-theme="dark" data-step="2">
+      <header class="topbar">
+        <div class="pill">How it’s invoked</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">Two ways to trigger</h2>
+        <div class="cols">
+          <div class="card dark reveal" style="--d: 90ms">
+            <h3>Manual</h3>
+            <pre><code>/&lt;skill-name&gt;</code></pre>
+            <p>Explicitly run a skill when you want a known playbook.</p>
+          </div>
+          <div class="card dark reveal" style="--d: 160ms">
+            <h3>Automatic</h3>
+            <pre><code>TRIGGER when: ...
+DO NOT TRIGGER when: ...</code></pre>
+            <p>Claude suggests / uses a skill based on context (imports, intent, files).</p>
+          </div>
+        </div>
+        <div class="timeline reveal" style="--d: 220ms">
+          <div class="t">
+            <span class="dot"></span>
+            <div>
+              <div class="t-title">You ask</div>
+              <div class="t-body">“Create a PR” or “use Anthropic SDK”</div>
+            </div>
+          </div>
+          <div class="t">
+            <span class="dot"></span>
+            <div>
+              <div class="t-title">Skill expands</div>
+              <div class="t-body">A longer, structured instruction set is injected</div>
+            </div>
+          </div>
+          <div class="t">
+            <span class="dot"></span>
+            <div>
+              <div class="t-title">Tools execute</div>
+              <div class="t-body">Bash/Read/Edit/etc — in a safe, repeatable order</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-theme="light" data-step="3">
+      <header class="topbar">
+        <div class="pill">Where skills live</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">Local, project, or shared</h2>
+        <div class="cols">
+          <div class="card reveal" style="--d: 80ms">
+            <h3>Shared skills directory</h3>
+            <p>Example: <code>~/.claude/skills</code></p>
+            <p class="small">Great for personal playbooks you use everywhere.</p>
+          </div>
+          <div class="card reveal" style="--d: 140ms">
+            <h3>Project conventions</h3>
+            <p>Teams can standardize workflows via repo docs &amp; instructions.</p>
+            <p class="small">Great for “how we do things here”.</p>
+          </div>
+          <div class="card reveal" style="--d: 200ms">
+            <h3>Composable</h3>
+            <p>Multiple skills can exist side-by-side (e.g., API, UI, testing, docs).</p>
+            <p class="small">Pick the right tool for the job.</p>
+          </div>
+        </div>
+        <div class="codeblock reveal" style="--d: 260ms">
+<pre><code>~/.claude/skills/
+  brand-guidelines/
+  frontend-slides/
+  ...</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-theme="dark" data-step="4">
+      <header class="topbar">
+        <div class="pill">Why it matters</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">Skills optimize for <span class="accent">reliability</span></h2>
+        <div class="grid2">
+          <div class="card dark reveal" style="--d: 80ms">
+            <h3>Consistency</h3>
+            <p>Same high-quality process every time (no missed steps).</p>
+          </div>
+          <div class="card dark reveal" style="--d: 130ms">
+            <h3>Safety</h3>
+            <p>Built-in guardrails around risky actions (push, delete, reset).</p>
+          </div>
+          <div class="card dark reveal" style="--d: 180ms">
+            <h3>Speed</h3>
+            <p>Less re-explaining. More doing. Better defaults.</p>
+          </div>
+          <div class="card dark reveal" style="--d: 230ms">
+            <h3>Knowledge capture</h3>
+            <p>Turns tribal knowledge into an executable checklist.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-theme="light" data-step="5">
+      <header class="topbar">
+        <div class="pill">Anatomy</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">A skill is mostly <span class="accent">instructions</span></h2>
+        <div class="codeblock reveal" style="--d: 90ms">
+<pre><code>TRIGGER when: user asks to create a pull request
+DO NOT TRIGGER when: user is just asking questions
+
+Steps:
+  1) Inspect status/diff/log
+  2) Draft title + summary
+  3) Push branch if needed
+  4) Create PR with gh
+
+Rules:
+  - don't force-push
+  - don't bypass hooks
+  - ask before destructive ops</code></pre>
+        </div>
+        <div class="callout reveal" style="--d: 160ms">
+          <strong>Tip:</strong> Write skills like you’re coaching a teammate. Make the “order of operations” explicit.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-theme="dark" data-step="6">
+      <header class="topbar">
+        <div class="pill">Best practices</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">Designing good skills</h2>
+        <ul class="checklist">
+          <li class="reveal" style="--d: 70ms"><span class="check"></span><span><strong>Scope tightly:</strong> one job, one flow.</span></li>
+          <li class="reveal" style="--d: 120ms"><span class="check"></span><span><strong>Tool-first:</strong> Read/Grep/Edit before guessing.</span></li>
+          <li class="reveal" style="--d: 170ms"><span class="check"></span><span><strong>Safety gates:</strong> confirm hard-to-reverse actions.</span></li>
+          <li class="reveal" style="--d: 220ms"><span class="check"></span><span><strong>Outputs:</strong> specify format (bullets, checklists, code blocks).</span></li>
+          <li class="reveal" style="--d: 270ms"><span class="check"></span><span><strong>Triggers:</strong> keep them specific to avoid spam.</span></li>
+        </ul>
+        <div class="callout subtle reveal" style="--d: 320ms">
+          <strong>Rule of thumb:</strong> if you had to prompt it twice, it probably deserves a skill.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-theme="light" data-step="7">
+      <header class="topbar">
+        <div class="pill">Try it</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">A tiny demo script</h2>
+        <div class="cols">
+          <div class="card reveal" style="--d: 80ms">
+            <h3>Ask</h3>
+            <pre><code>Create a PR for my branch</code></pre>
+          </div>
+          <div class="card reveal" style="--d: 150ms">
+            <h3>Run</h3>
+            <pre><code>/pr</code></pre>
+          </div>
+          <div class="card reveal" style="--d: 220ms">
+            <h3>Get</h3>
+            <pre><code>Title
+Summary
+Test plan checklist
+PR URL</code></pre>
+          </div>
+        </div>
+        <div class="callout reveal" style="--d: 280ms">
+          Swap <code>/pr</code> with any skill you’ve installed. The point is repeatability.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-theme="dark" data-step="8">
+      <div class="bg-orb a"></div>
+      <div class="bg-orb b"></div>
+      <header class="topbar">
+        <div class="pill">Wrap</div>
+      </header>
+      <div class="content">
+        <h2 class="reveal">Takeaways</h2>
+        <div class="takeaways">
+          <div class="take reveal" style="--d: 90ms"><span class="n">1</span><span>Skills = reusable, safe workflows.</span></div>
+          <div class="take reveal" style="--d: 150ms"><span class="n">2</span><span>Triggers make them discoverable and automatic.</span></div>
+          <div class="take reveal" style="--d: 210ms"><span class="n">3</span><span>Design for clarity: steps, rules, outputs.</span></div>
+        </div>
+        <div class="cta reveal" style="--d: 280ms">
+          <div>
+            <div class="cta-title">Next:</div>
+            <div class="cta-body">Pick one repeated task → write one skill → iterate.</div>
+          </div>
+          <div class="cta-kbd">
+            <span class="kbd">R</span> restart · <span class="kbd">Esc</span> overview
+          </div>
+        </div>
+      </div>
+      <footer class="footer">Open <code>index.html</code> in a browser.</footer>
+    </section>
+
+  </main>
+
+  <div class="overview" aria-hidden="true">
+    <div class="overview-grid" id="overviewGrid"></div>
+  </div>
+
+  <script src="./slides.js"></script>
+</body>
+</html>
