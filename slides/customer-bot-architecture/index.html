@@ -222,6 +222,16 @@
         gap: 10px;
       }
 
+      .box-title.center {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .box-title.center .badge {
+        margin-left: 10px;
+      }
+
       .box h3 {
         margin: 0;
         font-size: 13px;
@@ -620,10 +630,7 @@
     <div class="wrap">
       <div class="chip"><span class="dot"></span> 方案评审 · 架构信息图</div>
       <h1>客服机器人架构演进：从 <span style="font-weight: 850">Agent + 工具</span> 到 <span style="font-weight: 850">Agent + Skill</span></h1>
-      <p class="subtitle">
-        通过引入 <b>Skill</b> 作为任务级能力单元，将原有“Agent 直接挂业务工具”的模式升级为
-        “Agent 负责调度，Skill 负责处理，References 提供知识，Scripts 负责执行”的分层架构。
-      </p>
+      <p class="subtitle">通过引入 <b>Skill</b> 作为任务级能力单元，将原有“Agent 直接挂业务工具”的模式升级为 “Agent 负责调度，Skill 负责处理，References 提供知识，Scripts 负责执行”的分层架构。</p>
 
       <div class="grid">
         <!-- Left -->
@@ -633,26 +640,24 @@
               <h2>历史架构：Agent + 工具</h2>
               <div class="hint">Agent 直接挂业务工具（知识/规则/执行耦合在工具内部）</div>
             </div>
-            <div class="badge legacy">History</div>
+            <div class="badge legacy">Before</div>
           </div>
 
           <div class="stack">
             <div class="box">
-              <div class="box-title"><h3>意图识别</h3></div>
-              <div class="sub">Intent Recognition</div>
+              <div class="box-title center"><h3>意图识别</h3></div>
             </div>
 
             <div class="box">
-              <div class="box-title">
-                <h3>客服 Agent</h3>
+              <div class="box-title center">
+                <h3>解决方案 Agent</h3>
                 <span class="badge legacy" style="padding: 4px 8px">Agent</span>
               </div>
-              <div class="sub">Routing & Execution</div>
             </div>
 
             <div class="dashed legacy">
               <div class="dashed-head">
-                <div class="t">耦合区域（问题）</div>
+                <div class="t">workflow tool</div>
                 <div class="s">coupled · hard to govern</div>
               </div>
 
@@ -717,21 +722,19 @@
               <h2>目标架构：Agent + Skill</h2>
               <div class="hint">Agent 负责路由与调度，Skill 负责场景处理与流程编排</div>
             </div>
-            <div class="badge target">Target</div>
+            <div class="badge target">After</div>
           </div>
 
           <div class="stack">
             <div class="box">
-              <div class="box-title"><h3>意图识别</h3></div>
-              <div class="sub">Intent Recognition</div>
+              <div class="box-title center"><h3>意图识别</h3></div>
             </div>
 
             <div class="box">
-              <div class="box-title">
-                <h3>客服 Agent</h3>
+              <div class="box-title center">
+                <h3>解决方案 Agent</h3>
                 <span class="badge target" style="padding: 4px 8px">Agent</span>
               </div>
-              <div class="sub">Routing & Orchestration</div>
             </div>
 
             <div class="dashed target">
