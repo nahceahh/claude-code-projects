@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>客服机器人架构演进：Agent + 工具 → Agent + Skill</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --card: rgba(255, 255, 255, 0.78);
+        --stroke: rgba(15, 23, 42, 0.12);
+        --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+        --text: #0f172a;
+        --muted: rgba(15, 23, 42, 0.62);
+        --muted2: rgba(15, 23, 42, 0.52);
+
+        --legacy-bg: rgba(251, 191, 36, 0.11);
+        --legacy-stroke: rgba(251, 191, 36, 0.42);
+        --legacy-pill: rgba(251, 191, 36, 0.16);
+        --legacy-pill-stroke: rgba(251, 191, 36, 0.55);
+
+        --target-bg: rgba(16, 185, 129, 0.11);
+        --target-stroke: rgba(16, 185, 129, 0.42);
+        --target-pill: rgba(16, 185, 129, 0.14);
+        --target-pill-stroke: rgba(16, 185, 129, 0.52);
+
+        --radius: 18px;
+        --radius2: 22px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 38px 24px 34px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.65);
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+        font-size: 12px;
+        font-weight: 650;
+        color: rgba(15, 23, 42, 0.74);
+      }
+
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.35);
+      }
+
+      h1 {
+        margin: 14px 0 0;
+        font-size: 34px;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .subtitle {
+        margin: 10px 0 0;
+        max-width: 980px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      .grid {
+        margin-top: 22px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      @media (min-width: 1040px) {
+        .grid {
+          grid-template-columns: 1fr 160px 1fr;
+          gap: 18px;
+          align-items: stretch;
+        }
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius2);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .panel h2 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      .panel .hint {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.7);
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: rgba(15, 23, 42, 0.75);
+      }
+
+      .badge.legacy {
+        border-color: var(--legacy-pill-stroke);
+        background: var(--legacy-pill);
+        color: rgba(120, 53, 15, 0.95);
+      }
+
+      .badge.target {
+        border-color: var(--target-pill-stroke);
+        background: var(--target-pill);
+        color: rgba(6, 95, 70, 0.95);
+      }
+
+      .flow {
+        margin-top: 14px;
+        border-radius: 14px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.55);
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 12px;
+        color: rgba(15, 23, 42, 0.78);
+      }
+
+      .flow strong {
+        color: rgba(15, 23, 42, 0.92);
+      }
+
+      .arrowi {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: rgba(15, 23, 42, 0.36);
+      }
+
+      .arrowi::before {
+        content: "";
+        width: 22px;
+        height: 1px;
+        background: rgba(15, 23, 42, 0.24);
+      }
+
+      .stack {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .box {
+        border-radius: 14px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+        padding: 12px 12px;
+        transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .box:hover {
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
+        border-color: rgba(15, 23, 42, 0.22);
+        transform: translateY(-1px);
+      }
+
+      .box-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .box h3 {
+        margin: 0;
+        font-size: 13px;
+        letter-spacing: -0.01em;
+      }
+
+      .box .sub {
+        margin-top: 4px;
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      .dashed {
+        border-radius: var(--radius);
+        border: 1px dashed;
+        padding: 14px;
+      }
+
+      .dashed.legacy {
+        border-color: var(--legacy-stroke);
+        background: var(--legacy-bg);
+      }
+
+      .dashed.target {
+        border-color: var(--target-stroke);
+        background: var(--target-bg);
+      }
+
+      .dashed-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .dashed-head .t {
+        font-size: 12px;
+        font-weight: 750;
+        color: rgba(15, 23, 42, 0.82);
+      }
+
+      .dashed-head .s {
+        font-size: 11px;
+        color: rgba(15, 23, 42, 0.52);
+      }
+
+      .issues {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.6;
+        color: rgba(15, 23, 42, 0.70);
+      }
+
+      .issues ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+
+      .issues li {
+        margin: 2px 0;
+      }
+
+      /* Center arrow */
+      .center {
+        display: none;
+      }
+
+      @media (min-width: 1040px) {
+        .center {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      .upgrade {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .upgrade::before {
+        content: "";
+        position: absolute;
+        top: 12px;
+        bottom: 12px;
+        left: 50%;
+        width: 1px;
+        transform: translateX(-50%);
+        background: linear-gradient(180deg, transparent, rgba(15, 23, 42, 0.18), transparent);
+      }
+
+      .upgrade-card {
+        z-index: 1;
+        border-radius: 16px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.76);
+        box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+        padding: 12px 14px;
+        text-align: center;
+      }
+
+      .upgrade-card .k {
+        font-size: 12px;
+        font-weight: 800;
+        color: rgba(15, 23, 42, 0.78);
+      }
+
+      .upgrade-card .mini {
+        margin-top: 6px;
+        font-size: 11px;
+        color: rgba(15, 23, 42, 0.56);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.7);
+        padding: 3px 8px;
+        font-weight: 700;
+        color: rgba(15, 23, 42, 0.75);
+      }
+
+      .upgrade-arrow {
+        z-index: 1;
+        position: relative;
+        width: 118px;
+        height: 42px;
+      }
+
+      .upgrade-arrow .body {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      .upgrade-arrow .line {
+        position: absolute;
+        left: 20px;
+        right: 26px;
+        top: 50%;
+        height: 4px;
+        transform: translateY(-50%);
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.22);
+      }
+
+      .upgrade-arrow .head {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 16px solid rgba(15, 23, 42, 0.22);
+      }
+
+      .upgrade-caption {
+        z-index: 1;
+        max-width: 180px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.55;
+        color: rgba(15, 23, 42, 0.62);
+      }
+
+      /* Skill module */
+      .skill {
+        border-radius: 18px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+        padding: 14px;
+        transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .skill:hover {
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+        border-color: rgba(15, 23, 42, 0.22);
+        transform: translateY(-1px);
+      }
+
+      .skill-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .skill h4 {
+        margin: 0;
+        font-size: 13px;
+        letter-spacing: -0.01em;
+      }
+
+      .skill .desc {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.55;
+        color: rgba(15, 23, 42, 0.62);
+      }
+
+      .row {
+        margin-top: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .minirow {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        border-radius: 14px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.6);
+        padding: 10px 10px;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+        font-size: 12px;
+        line-height: 1.35;
+        color: rgba(15, 23, 42, 0.78);
+      }
+
+      .mono {
+        display: inline-flex;
+        align-items: center;
+        height: 24px;
+        padding: 0 8px;
+        border-radius: 10px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.85);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+          monospace;
+        font-size: 11px;
+        font-weight: 800;
+        color: rgba(15, 23, 42, 0.86);
+        white-space: nowrap;
+      }
+
+      .legend {
+        margin-top: 10px;
+        border-radius: 16px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.58);
+        padding: 12px 12px;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+        font-size: 12px;
+        color: rgba(15, 23, 42, 0.72);
+      }
+
+      .legend .line {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin: 6px 0;
+      }
+
+      .legend .b {
+        width: 7px;
+        height: 7px;
+        margin-top: 6px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.35);
+        flex: 0 0 auto;
+      }
+
+      /* Summary */
+      .summary {
+        margin-top: 20px;
+      }
+
+      .summary-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .summary h5 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      .summary p {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .cards {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      @media (min-width: 780px) {
+        .cards {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (min-width: 1100px) {
+        .cards {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .scard {
+        border-radius: 18px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: var(--shadow);
+        padding: 14px;
+        transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .scard:hover {
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
+        border-color: rgba(15, 23, 42, 0.22);
+        transform: translateY(-1px);
+      }
+
+      .scard .t {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin: 0;
+      }
+
+      .fromto {
+        margin-top: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .kv {
+        border-radius: 14px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.64);
+        padding: 10px;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+        font-size: 12px;
+        color: rgba(15, 23, 42, 0.78);
+      }
+
+      .kv .k {
+        font-size: 11px;
+        font-weight: 800;
+        color: rgba(15, 23, 42, 0.52);
+      }
+
+      .kv .v {
+        margin-top: 4px;
+        line-height: 1.45;
+      }
+
+      .kv .v strong {
+        color: rgba(15, 23, 42, 0.90);
+      }
+
+      .note {
+        margin-top: 14px;
+        font-size: 11px;
+        color: rgba(15, 23, 42, 0.52);
+      }
+
+      .footer {
+        margin-top: 10px;
+        font-size: 11px;
+        color: rgba(15, 23, 42, 0.48);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="chip"><span class="dot"></span> 方案评审 · 架构信息图</div>
+      <h1>客服机器人架构演进：从 <span style="font-weight: 850">Agent + 工具</span> 到 <span style="font-weight: 850">Agent + Skill</span></h1>
+      <p class="subtitle">
+        通过引入 <b>Skill</b> 作为任务级能力单元，将原有“Agent 直接挂业务工具”的模式升级为
+        “Agent 负责调度，Skill 负责处理，References 提供知识，Scripts 负责执行”的分层架构。
+      </p>
+
+      <div class="grid">
+        <!-- Left -->
+        <section class="panel" aria-label="历史架构 Agent + 工具">
+          <div class="panel-header">
+            <div>
+              <h2>历史架构：Agent + 工具</h2>
+              <div class="hint">Agent 直接挂业务工具（知识/规则/执行耦合在工具内部）</div>
+            </div>
+            <div class="badge legacy">History</div>
+          </div>
+
+          <div class="flow">
+            <strong>用户 Query</strong>
+            <span class="arrowi">▶</span>
+            <strong>意图识别</strong>
+            <span class="arrowi">▶</span>
+            <strong>路由</strong>
+          </div>
+
+          <div class="stack">
+            <div class="box">
+              <div class="box-title"><h3>意图识别</h3></div>
+              <div class="sub">Intent Recognition</div>
+            </div>
+
+            <div class="box">
+              <div class="box-title">
+                <h3>客服 Agent</h3>
+                <span class="badge legacy" style="padding: 4px 8px">Agent</span>
+              </div>
+              <div class="sub">Routing & Execution</div>
+            </div>
+
+            <div class="dashed legacy">
+              <div class="dashed-head">
+                <div class="t">耦合区域（问题）</div>
+                <div class="s">coupled · hard to govern</div>
+              </div>
+
+              <div class="stack">
+                <div class="box">
+                  <div class="box-title"><h3>催派处理工具</h3></div>
+                  <div class="sub">Business Tool</div>
+                </div>
+                <div class="box">
+                  <div class="box-title"><h3>丢失处理工具</h3></div>
+                  <div class="sub">Business Tool</div>
+                </div>
+
+                <div class="issues">
+                  <ul>
+                    <li>Agent 直接挂业务工具</li>
+                    <li>知识、规则、执行耦合在工具内部</li>
+                    <li>能力复用和治理边界不清晰</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="box">
+              <div class="box-title"><h3>底层执行能力</h3></div>
+              <div class="sub">Execution Capabilities</div>
+            </div>
+
+            <div class="legend" style="border-color: var(--legacy-pill-stroke); background: rgba(251, 191, 36, 0.10)">
+              <div style="font-weight: 800; margin-bottom: 2px">问题聚焦</div>
+              <div style="color: rgba(120, 53, 15, 0.92)">耦合导致复用困难、治理边界不清。</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Center -->
+        <div class="center" aria-hidden="true">
+          <div class="upgrade">
+            <div class="upgrade-card">
+              <div class="k">升级演进</div>
+              <div class="mini">
+                <span class="pill">Tool-coupled</span>
+                <span style="opacity: 0.7">→</span>
+                <span class="pill">Skill-layered</span>
+              </div>
+            </div>
+
+            <div class="upgrade-arrow">
+              <div class="body"></div>
+              <div class="line"></div>
+              <div class="head"></div>
+            </div>
+
+            <div class="upgrade-caption">从“能力黑盒工具”到“可治理的任务级单元”</div>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <section class="panel" aria-label="目标架构 Agent + Skill">
+          <div class="panel-header">
+            <div>
+              <h2>目标架构：Agent + Skill</h2>
+              <div class="hint">Agent 负责路由与调度，Skill 负责场景处理与流程编排</div>
+            </div>
+            <div class="badge target">Target</div>
+          </div>
+
+          <div class="flow">
+            <strong>用户 Query</strong>
+            <span class="arrowi">▶</span>
+            <strong>意图识别</strong>
+            <span class="arrowi">▶</span>
+            <strong>路由</strong>
+          </div>
+
+          <div class="stack">
+            <div class="box">
+              <div class="box-title"><h3>意图识别</h3></div>
+              <div class="sub">Intent Recognition</div>
+            </div>
+
+            <div class="box">
+              <div class="box-title">
+                <h3>客服 Agent</h3>
+                <span class="badge target" style="padding: 4px 8px">Agent</span>
+              </div>
+              <div class="sub">Routing & Orchestration</div>
+            </div>
+
+            <div class="dashed target">
+              <div class="dashed-head">
+                <div class="t">Skill 层（核心）</div>
+                <div class="s">layered · modular · governable</div>
+              </div>
+
+              <div class="stack">
+                <div class="skill">
+                  <div class="skill-head">
+                    <div>
+                      <h4>催派处理 Skill <span style="font-weight: 600; color: rgba(15,23,42,.52)">(Escalation)</span></h4>
+                      <div class="desc">由 <b>Skill.md</b> 驱动，结合 <b>References</b> 与 <b>Scripts</b> 完成闭环。</div>
+                    </div>
+                    <span class="badge target" style="padding: 4px 8px">Skill</span>
+                  </div>
+                  <div class="row">
+                    <div class="minirow"><span class="mono">Skill.md</span><span>任务执行说明书 / 流程编排</span><span style="opacity:.55">→</span></div>
+                    <div class="minirow"><span class="mono">References</span><span>FAQ / 规则 / 文档知识库</span><span style="opacity:.55">→</span></div>
+                    <div class="minirow"><span class="mono">Scripts</span><span>查询包裹 / 提交催派工单 / 核查</span><span style="opacity:.55">→</span></div>
+                  </div>
+                </div>
+
+                <div class="skill">
+                  <div class="skill-head">
+                    <div>
+                      <h4>丢失核查 Skill <span style="font-weight: 600; color: rgba(15,23,42,.52)">(Loss Check)</span></h4>
+                      <div class="desc">Skill 负责场景处理，明确“核查路径 + 判定标准”，可评估、可治理。</div>
+                    </div>
+                    <span class="badge target" style="padding: 4px 8px">Skill</span>
+                  </div>
+                  <div class="row">
+                    <div class="minirow"><span class="mono">Skill.md</span><span>核查路径 + 判定标准</span><span style="opacity:.55">→</span></div>
+                    <div class="minirow"><span class="mono">References</span><span>丢失规则 / 赔付政策</span><span style="opacity:.55">→</span></div>
+                    <div class="minirow"><span class="mono">Scripts</span><span>核查丢失状态 / 取证</span><span style="opacity:.55">→</span></div>
+                  </div>
+                </div>
+
+                <div class="skill">
+                  <div class="skill-head">
+                    <div>
+                      <h4>状态查询 Skill <span style="font-weight: 600; color: rgba(15,23,42,.52)">(Status)</span></h4>
+                      <div class="desc">把“常用查询”固化为 Skill，统一口径与执行链路。</div>
+                    </div>
+                    <span class="badge target" style="padding: 4px 8px">Skill</span>
+                  </div>
+                  <div class="row">
+                    <div class="minirow"><span class="mono">Skill.md</span><span>标准查询流程</span><span style="opacity:.55">→</span></div>
+                    <div class="minirow"><span class="mono">References</span><span>字段解释 / 口径</span><span style="opacity:.55">→</span></div>
+                    <div class="minirow"><span class="mono">Scripts</span><span>查询包裹信息 / 事件轨迹</span><span style="opacity:.55">→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="legend" style="margin-top: 10px">
+                <div class="line"><span class="b"></span><div><b>Agent</b>：负责路由和调度</div></div>
+                <div class="line"><span class="b"></span><div><b>Skill</b>：负责场景处理和流程编排</div></div>
+                <div class="line"><span class="b"></span><div><b>References</b>：提供知识依据</div></div>
+                <div class="line"><span class="b"></span><div><b>Scripts</b>：负责执行动作</div></div>
+              </div>
+            </div>
+
+            <div class="box">
+              <div class="box-title"><h3>底层执行能力</h3></div>
+              <div class="sub">Execution Capabilities</div>
+            </div>
+
+            <div class="legend" style="border-color: var(--target-pill-stroke); background: rgba(16, 185, 129, 0.10)">
+              <div style="font-weight: 800; margin-bottom: 2px">目标收益</div>
+              <div style="color: rgba(6, 95, 70, 0.95)">分层清晰、可复用、可评估、可治理。</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="summary" aria-label="核心变化总结">
+        <div class="summary-head">
+          <div>
+            <h5>核心变化总结</h5>
+            <p>从“工具中心”的强耦合模式，升级为“Skill 中心”的分层可治理架构。</p>
+          </div>
+          <div class="chip" style="display: none" id="shot">适合截图 · 一页信息图</div>
+        </div>
+
+        <div class="cards">
+          <div class="scard">
+            <p class="t">能力组织方式</p>
+            <div class="fromto">
+              <div class="kv"><div class="k">From</div><div class="v">工具中心</div></div>
+              <div class="kv"><div class="k">To</div><div class="v"><strong>Skill 中心</strong></div></div>
+            </div>
+          </div>
+
+          <div class="scard">
+            <p class="t">知识承载方式</p>
+            <div class="fromto">
+              <div class="kv"><div class="k">From</div><div class="v">不支持配置外挂知识库</div></div>
+              <div class="kv"><div class="k">To</div><div class="v"><strong>References 显式管理</strong></div></div>
+            </div>
+          </div>
+
+          <div class="scard">
+            <p class="t">执行链路</p>
+            <div class="fromto">
+              <div class="kv"><div class="k">From</div><div class="v">工具内 workflow 执行</div></div>
+              <div class="kv"><div class="k">To</div><div class="v"><strong>Skill 调用执行（Scripts）</strong></div></div>
+            </div>
+          </div>
+
+          <div class="scard">
+            <p class="t">治理边界</p>
+            <div class="fromto">
+              <div class="kv"><div class="k">From</div><div class="v">场景/知识/执行混在一起</div></div>
+              <div class="kv"><div class="k">To</div><div class="v"><strong>分层清晰：Agent / Skill / References / Scripts</strong></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">交互：仅轻微 hover 强化边框/阴影；无弹窗、无数据请求。</div>
+        <div class="footer">本页为静态示意，可直接截图用于内部评审。</div>
+      </section>
+    </div>
+
+    <script>
+      // Show the “适合截图” chip on wider screens (simple enhancement)
+      (function () {
+        try {
+          var el = document.getElementById("shot");
+          if (!el) return;
+          if (window.innerWidth >= 900) el.style.display = "inline-flex";
+        } catch (e) {}
+      })();
+    </script>
+  </body>
+</html>
