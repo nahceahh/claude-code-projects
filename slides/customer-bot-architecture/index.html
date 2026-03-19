@@ -290,15 +290,16 @@
 
       .arrow-between {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
         padding: 6px 0;
       }
 
       .arrow-between .line {
-        width: 56px;
-        height: 3px;
+        width: 3px;
+        height: 34px;
         border-radius: 999px;
         background: rgba(15, 23, 42, 0.22);
       }
@@ -306,9 +307,9 @@
       .arrow-between .head {
         width: 0;
         height: 0;
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-        border-left: 12px solid rgba(15, 23, 42, 0.22);
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 12px solid rgba(15, 23, 42, 0.22);
       }
 
       .issues ul {
