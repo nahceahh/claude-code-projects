@@ -103,7 +103,7 @@
 
       @media (min-width: 1040px) {
         .grid {
-          grid-template-columns: 1fr 160px 1fr;
+          grid-template-columns: 1fr 1fr;
           gap: 18px;
           align-items: stretch;
         }
@@ -649,10 +649,7 @@
             </div>
 
             <div class="box">
-              <div class="box-title center">
-                <h3>解决方案 Agent</h3>
-                <span class="badge legacy" style="padding: 4px 8px">Agent</span>
-              </div>
+              <div class="box-title center"><h3>解决方案 Agent</h3></div>
             </div>
 
             <div class="dashed legacy">
@@ -664,11 +661,9 @@
               <div class="stack">
                 <div class="box">
                   <div class="box-title"><h3>催派处理工具</h3></div>
-                  <div class="sub">Business Tool</div>
                 </div>
                 <div class="box">
                   <div class="box-title"><h3>丢失处理工具</h3></div>
-                  <div class="sub">Business Tool</div>
                 </div>
 
                 <div class="issues">
@@ -681,15 +676,6 @@
               </div>
             </div>
 
-            <div class="box">
-              <div class="box-title"><h3>底层执行能力</h3></div>
-              <div class="sub">Execution Capabilities</div>
-            </div>
-
-            <div class="legend" style="border-color: var(--legacy-pill-stroke); background: rgba(251, 191, 36, 0.10)">
-              <div style="font-weight: 800; margin-bottom: 2px">问题聚焦</div>
-              <div style="color: rgba(120, 53, 15, 0.92)">耦合导致复用困难、治理边界不清。</div>
-            </div>
           </div>
         </section>
 
@@ -709,53 +695,49 @@
             </div>
 
             <div class="box">
-              <div class="box-title center">
-                <h3>解决方案 Agent</h3>
-                <span class="badge target" style="padding: 4px 8px">Agent</span>
-              </div>
+              <div class="box-title center"><h3>解决方案 Agent</h3></div>
             </div>
 
             <div class="dashed target">
               <div class="dashed-head">
-                <div class="t">Skill 层（核心）</div>
-                <div class="s">layered · modular · governable</div>
+                <div class="t">挂载能力（Skill + References + Tools）</div>
               </div>
 
               <div class="stack">
-                <div class="skill">
-                  <div class="skill-head">
-                    <div>
-                      <h4>催派处理 Skill <span style="font-weight: 600; color: rgba(15,23,42,.52)">(Escalation)</span></h4>
-                      <div class="desc">由 <b>Skill.md</b> 驱动，结合 <b>References</b> 与 <b>Scripts</b> 完成闭环。</div>
-                    </div>
-                    <span class="badge target" style="padding: 4px 8px">Skill</span>
-                  </div>
-                  <div class="row">
-                    <div class="minirow"><span class="mono">Skill.md</span><span>任务执行说明书 / 流程编排</span><span style="opacity:.55">→</span></div>
-                    <div class="minirow"><span class="mono">References</span><span>FAQ / 规则 / 文档知识库</span><span style="opacity:.55">→</span></div>
-                    <div class="minirow"><span class="mono">Scripts</span><span>查询包裹 / 提交催派工单 / 核查</span><span style="opacity:.55">→</span></div>
+                <div class="box">
+                  <div class="box-title"><h3>Skills</h3></div>
+                  <div class="issues">
+                    <ul>
+                      <li>催派处理 Skill</li>
+                      <li>丢失核查 Skill</li>
+                      <li>状态查询 Skill</li>
+                    </ul>
                   </div>
                 </div>
 
+                <div class="box">
+                  <div class="box-title"><h3>References</h3></div>
+                  <div class="issues">
+                    <ul>
+                      <li>FAQ / 规则 / 文档知识库</li>
+                      <li>口径说明 / 字段解释</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="box">
+                  <div class="box-title"><h3>Tools</h3></div>
+                  <div class="issues">
+                    <ul>
+                      <li>查询包裹信息</li>
+                      <li>提交催派工单</li>
+                      <li>核查丢失状态</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-
-              <div class="legend" style="margin-top: 10px">
-                <div class="line"><span class="b"></span><div><b>Agent</b>：负责路由和调度</div></div>
-                <div class="line"><span class="b"></span><div><b>Skill</b>：负责场景处理和流程编排</div></div>
-                <div class="line"><span class="b"></span><div><b>References</b>：提供知识依据</div></div>
-                <div class="line"><span class="b"></span><div><b>Scripts</b>：负责执行动作</div></div>
-              </div>
             </div>
 
-            <div class="box">
-              <div class="box-title"><h3>底层执行能力</h3></div>
-              <div class="sub">Execution Capabilities</div>
-            </div>
-
-            <div class="legend" style="border-color: var(--target-pill-stroke); background: rgba(16, 185, 129, 0.10)">
-              <div style="font-weight: 800; margin-bottom: 2px">目标收益</div>
-              <div style="color: rgba(6, 95, 70, 0.95)">分层清晰、可复用、可评估、可治理。</div>
-            </div>
           </div>
         </section>
       </div>
