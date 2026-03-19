@@ -92,6 +92,7 @@
         font-size: 14px;
         line-height: 1.6;
         color: var(--muted);
+        white-space: nowrap;
       }
 
       .grid {
@@ -285,6 +286,29 @@
         font-size: 12px;
         line-height: 1.6;
         color: rgba(15, 23, 42, 0.70);
+      }
+
+      .arrow-between {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 6px 0;
+      }
+
+      .arrow-between .line {
+        width: 56px;
+        height: 3px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.22);
+      }
+
+      .arrow-between .head {
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 12px solid rgba(15, 23, 42, 0.22);
       }
 
       .issues ul {
@@ -628,7 +652,6 @@
   </head>
   <body>
     <div class="wrap">
-      <div class="chip"><span class="dot"></span> 方案评审 · 架构信息图</div>
       <h1>客服机器人架构演进：从 <span style="font-weight: 850">Agent + 工具</span> 到 <span style="font-weight: 850">Agent + Skill</span></h1>
       <p class="subtitle">通过引入 <b>Skill</b> 作为任务级能力单元，将原有“Agent 直接挂业务工具”的模式升级为 “Agent 负责调度，Skill 负责处理，References 提供知识，Scripts 负责执行”的分层架构。</p>
 
@@ -648,30 +671,37 @@
               <div class="box-title center"><h3>意图识别</h3></div>
             </div>
 
-            <div class="box">
-              <div class="box-title center"><h3>解决方案 Agent</h3></div>
+            <div class="arrow-between" aria-hidden="true">
+              <div class="line"></div>
+              <div class="head"></div>
             </div>
 
-            <div class="dashed legacy">
-              <div class="dashed-head">
-                <div class="t">workflow tool</div>
-                <div class="s">coupled · hard to govern</div>
-              </div>
+            <div class="box">
+              <div class="box-title center"><h3>解决方案 Agent</h3></div>
 
-              <div class="stack">
-                <div class="box">
-                  <div class="box-title"><h3>催派处理工具</h3></div>
-                </div>
-                <div class="box">
-                  <div class="box-title"><h3>丢失处理工具</h3></div>
+              <div class="dashed legacy" style="margin-top: 12px">
+                <div class="dashed-head">
+                  <div class="t">workflow tool</div>
                 </div>
 
-                <div class="issues">
-                  <ul>
-                    <li>Agent 直接挂业务工具</li>
-                    <li>知识、规则、执行耦合在工具内部</li>
-                    <li>能力复用和治理边界不清晰</li>
-                  </ul>
+                <div class="stack">
+                  <div class="box">
+                    <div class="box-title"><h3>催派处理工具</h3></div>
+                  </div>
+                  <div class="box">
+                    <div class="box-title"><h3>丢失处理工具</h3></div>
+                  </div>
+                  <div class="box">
+                    <div class="box-title"><h3>破损处理工具</h3></div>
+                  </div>
+
+                  <div class="issues">
+                    <ul>
+                      <li>Agent 直接挂业务工具</li>
+                      <li>知识、规则、执行耦合在工具内部</li>
+                      <li>能力复用和治理边界不清晰</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -694,45 +724,48 @@
               <div class="box-title center"><h3>意图识别</h3></div>
             </div>
 
-            <div class="box">
-              <div class="box-title center"><h3>解决方案 Agent</h3></div>
+            <div class="arrow-between" aria-hidden="true">
+              <div class="line"></div>
+              <div class="head"></div>
             </div>
 
-            <div class="dashed target">
-              <div class="dashed-head">
-                <div class="t">挂载能力（Skill + References + Tools）</div>
-              </div>
+            <div class="box">
+              <div class="box-title center"><h3>解决方案 Agent</h3></div>
 
-              <div class="stack">
-                <div class="box">
-                  <div class="box-title"><h3>Skills</h3></div>
-                  <div class="issues">
-                    <ul>
-                      <li>催派处理 Skill</li>
-                      <li>丢失核查 Skill</li>
-                      <li>状态查询 Skill</li>
-                    </ul>
-                  </div>
+              <div class="dashed target" style="margin-top: 12px">
+                <div class="dashed-head">
+                  <div class="t">挂载能力（Skill + References + Tools）</div>
                 </div>
 
-                <div class="box">
-                  <div class="box-title"><h3>References</h3></div>
-                  <div class="issues">
-                    <ul>
-                      <li>FAQ / 规则 / 文档知识库</li>
-                      <li>口径说明 / 字段解释</li>
-                    </ul>
+                <div class="stack">
+                  <div class="box">
+                    <div class="box-title"><h3>Skills</h3></div>
+                    <div class="issues">
+                      <ul>
+                        <li>催派处理 Skill</li>
+                        <li>丢失核查 Skill</li>
+                        <li>包裹信息查询 Skill</li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
 
-                <div class="box">
-                  <div class="box-title"><h3>Tools</h3></div>
-                  <div class="issues">
-                    <ul>
-                      <li>查询包裹信息</li>
-                      <li>提交催派工单</li>
-                      <li>核查丢失状态</li>
-                    </ul>
+                  <div class="box">
+                    <div class="box-title"><h3>References</h3></div>
+                    <div class="issues">
+                      <ul>
+                        <li>FAQ / 规则 / 文档知识库</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="box">
+                    <div class="box-title"><h3>Tools</h3></div>
+                    <div class="issues">
+                      <ul>
+                        <li>查询包裹信息</li>
+                        <li>提交催派工单</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
