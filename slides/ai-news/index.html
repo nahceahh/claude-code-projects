@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI 资讯 · Anthropic 风格</title>
+
+    <!-- Optional online fallback (kept lightweight). Local installed fonts take precedence. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #faf9f5;
+        --card: rgba(255, 255, 255, 0.72);
+        --stroke: rgba(20, 20, 19, 0.14);
+        --stroke-strong: rgba(20, 20, 19, 0.22);
+        --shadow: 0 14px 40px rgba(20, 20, 19, 0.08);
+
+        --text: #141413;
+        --muted: rgba(20, 20, 19, 0.64);
+        --muted2: rgba(20, 20, 19, 0.52);
+
+        --accent: #d97757;
+        --accent2: #6a9bcc;
+        --accent3: #788c5d;
+
+        --radius: 22px;
+        --radius2: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: radial-gradient(1100px 520px at 18% 0%, rgba(217, 119, 87, 0.10), transparent 55%),
+          radial-gradient(900px 480px at 78% 12%, rgba(106, 155, 204, 0.10), transparent 55%),
+          radial-gradient(1000px 520px at 52% 110%, rgba(120, 140, 93, 0.10), transparent 55%),
+          var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: Lora, Georgia, serif;
+      }
+
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 34px 22px 44px;
+      }
+
+      header {
+        display: grid;
+        gap: 14px;
+        align-items: start;
+      }
+
+      .topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .mark {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(217, 119, 87, 0.18);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.62);
+        box-shadow: 0 2px 12px rgba(20, 20, 19, 0.06);
+        font-family: Poppins, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 650;
+        color: rgba(20, 20, 19, 0.72);
+        letter-spacing: 0.01em;
+      }
+
+      .pill .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(20, 20, 19, 0.36);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: Poppins, Arial, sans-serif;
+        font-size: 36px;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 980px;
+        font-size: 14px;
+        line-height: 1.75;
+        color: var(--muted);
+      }
+
+      .grid {
+        margin-top: 22px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.3fr 0.7fr;
+          gap: 18px;
+          align-items: start;
+        }
+      }
+
+      .card {
+        border-radius: var(--radius);
+        border: 1px solid var(--stroke);
+        background: var(--card);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .card:hover {
+        border-color: var(--stroke-strong);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-family: Poppins, Arial, sans-serif;
+        font-size: 14px;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        color: rgba(20, 20, 19, 0.78);
+      }
+
+      .section-title .meta {
+        font-size: 12px;
+        color: var(--muted2);
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.62);
+        padding: 6px 10px;
+        font-family: Poppins, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(20, 20, 19, 0.70);
+        user-select: none;
+      }
+
+      .chip i {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        display: inline-block;
+      }
+
+      .chip:nth-child(1) i {
+        background: rgba(217, 119, 87, 0.85);
+      }
+      .chip:nth-child(2) i {
+        background: rgba(106, 155, 204, 0.90);
+      }
+      .chip:nth-child(3) i {
+        background: rgba(120, 140, 93, 0.90);
+      }
+      .chip:nth-child(4) i {
+        background: rgba(176, 174, 165, 0.85);
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+
+      article {
+        border-radius: var(--radius2);
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.66);
+        padding: 14px;
+        box-shadow: 0 6px 18px rgba(20, 20, 19, 0.06);
+        transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      article:hover {
+        transform: translateY(-1px);
+        border-color: var(--stroke-strong);
+        box-shadow: 0 14px 26px rgba(20, 20, 19, 0.10);
+      }
+
+      .a-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 3px 8px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.68);
+        font-family: Poppins, Arial, sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(20, 20, 19, 0.70);
+        white-space: nowrap;
+      }
+
+      .tag.orange {
+        border-color: rgba(217, 119, 87, 0.38);
+        background: rgba(217, 119, 87, 0.10);
+      }
+
+      .tag.blue {
+        border-color: rgba(106, 155, 204, 0.42);
+        background: rgba(106, 155, 204, 0.10);
+      }
+
+      .tag.green {
+        border-color: rgba(120, 140, 93, 0.45);
+        background: rgba(120, 140, 93, 0.10);
+      }
+
+      .tag.gray {
+        border-color: rgba(176, 174, 165, 0.60);
+        background: rgba(176, 174, 165, 0.16);
+      }
+
+      h3 {
+        margin: 0;
+        font-family: Poppins, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+      }
+
+      .excerpt {
+        margin-top: 8px;
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .row {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .source {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted2);
+      }
+
+      .source b {
+        font-family: Poppins, Arial, sans-serif;
+        font-weight: 700;
+        color: rgba(20, 20, 19, 0.76);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.70);
+        font-family: Poppins, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 650;
+        color: rgba(20, 20, 19, 0.74);
+        text-decoration: none;
+      }
+
+      .btn:hover {
+        border-color: var(--stroke-strong);
+      }
+
+      .btn .arr {
+        font-weight: 900;
+      }
+
+      .sidebar {
+        display: grid;
+        gap: 14px;
+      }
+
+      .kpi {
+        display: grid;
+        gap: 10px;
+      }
+
+      .kpi .box {
+        border-radius: var(--radius2);
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.66);
+        padding: 12px;
+      }
+
+      .kpi .box .k {
+        font-family: Poppins, Arial, sans-serif;
+        font-weight: 800;
+        font-size: 12px;
+        color: rgba(20, 20, 19, 0.78);
+      }
+
+      .kpi .box .v {
+        margin-top: 6px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      .tiny {
+        font-size: 11px;
+        color: rgba(20, 20, 19, 0.50);
+        line-height: 1.55;
+      }
+
+      .divider {
+        height: 1px;
+        width: 100%;
+        background: rgba(20, 20, 19, 0.10);
+        margin: 12px 0;
+      }
+
+      .footer {
+        margin-top: 18px;
+        font-size: 11px;
+        color: rgba(20, 20, 19, 0.50);
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+          monospace;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 999px;
+        border: 1px solid rgba(20, 20, 19, 0.16);
+        background: rgba(255, 255, 255, 0.70);
+        color: rgba(20, 20, 19, 0.72);
+      }
+
+      /* Lightweight "fake" interactivity: local filtering (no network) */
+      .is-hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="topline">
+          <div class="brand">
+            <span class="mark" aria-hidden="true"></span>
+            <span class="pill"><span class="dot" aria-hidden="true"></span> AI 资讯</span>
+          </div>
+          <span class="pill">更新频率：每日 · 本页为静态示例</span>
+        </div>
+
+        <h1>今天值得关注的 AI 资讯</h1>
+        <p class="subtitle">
+          精选模型、产品与行业动态，采用 Anthropic 风格配色与排版。标题使用 <span class="mono">Poppins</span>，正文使用
+          <span class="mono">Lora</span>。
+        </p>
+      </header>
+
+      <div class="grid">
+        <main class="card" aria-label="资讯列表">
+          <div class="section-title">
+            <h2>Top Stories</h2>
+            <div class="meta">本地过滤 · 无外部请求</div>
+          </div>
+
+          <div class="filters" role="tablist" aria-label="分类筛选">
+            <div class="chip" role="tab" aria-selected="true" data-filter="all"><i></i>全部</div>
+            <div class="chip" role="tab" aria-selected="false" data-filter="models"><i></i>模型</div>
+            <div class="chip" role="tab" aria-selected="false" data-filter="product"><i></i>产品</div>
+            <div class="chip" role="tab" aria-selected="false" data-filter="policy"><i></i>行业</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="list" id="list">
+            <article data-tags="models">
+              <div class="a-head">
+                <div>
+                  <div class="tag orange">Models</div>
+                  <h3>多模态推理进入“可控工作流”阶段</h3>
+                </div>
+                <span class="tag gray">5 分钟速读</span>
+              </div>
+              <p class="excerpt">
+                新一代多模态模型更强调可组合性：将识别、抽取、校验与执行拆成可治理的步骤，提升可靠性与可审计性。
+              </p>
+              <div class="row">
+                <div class="source"><b>Research</b> · 2026-03-20</div>
+                <a class="btn" href="#" onclick="return false;" aria-label="打开详情（示例）">查看要点 <span class="arr">→</span></a>
+              </div>
+            </article>
+
+            <article data-tags="product">
+              <div class="a-head">
+                <div>
+                  <div class="tag blue">Product</div>
+                  <h3>Agent 产品从“对话”走向“任务交付”</h3>
+                </div>
+                <span class="tag gray">7 分钟速读</span>
+              </div>
+              <p class="excerpt">
+                越来越多产品将 Agent 的价值从“回答问题”迁移到“完成任务”：可观测、可恢复、可复用的能力单元成为核心。
+              </p>
+              <div class="row">
+                <div class="source"><b>Industry</b> · 2026-03-20</div>
+                <a class="btn" href="#" onclick="return false;">查看要点 <span class="arr">→</span></a>
+              </div>
+            </article>
+
+            <article data-tags="policy">
+              <div class="a-head">
+                <div>
+                  <div class="tag green">Policy</div>
+                  <h3>企业开始统一“模型使用规范”与评测口径</h3>
+                </div>
+                <span class="tag gray">4 分钟速读</span>
+              </div>
+              <p class="excerpt">
+                从数据边界、提示规范、工具权限到审计日志，越来越多组织把 AI 能力纳入统一治理体系，以降低合规与稳定性风险。
+              </p>
+              <div class="row">
+                <div class="source"><b>Ops</b> · 2026-03-20</div>
+                <a class="btn" href="#" onclick="return false;">查看要点 <span class="arr">→</span></a>
+              </div>
+            </article>
+
+            <article data-tags="models product">
+              <div class="a-head">
+                <div>
+                  <div class="tag orange">Models</div>
+                  <h3>长上下文不等于长工作：关键在“检索 + 引用”</h3>
+                </div>
+                <span class="tag gray">6 分钟速读</span>
+              </div>
+              <p class="excerpt">
+                当上下文变长，错误也可能被放大。更稳健的做法是让模型基于结构化引用工作：可追溯、可复核、可复用。
+              </p>
+              <div class="row">
+                <div class="source"><b>Research</b> · 2026-03-20</div>
+                <a class="btn" href="#" onclick="return false;">查看要点 <span class="arr">→</span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="footer">
+            提示：本页面为静态示例，可直接替换 <span class="mono">article</span> 内容为真实资讯数据（CMS/JSON/接口均可）。
+          </div>
+        </main>
+
+        <aside class="sidebar" aria-label="侧边信息">
+          <div class="card">
+            <div class="section-title">
+              <h2>Today</h2>
+              <div class="meta">快览</div>
+            </div>
+
+            <div class="kpi">
+              <div class="box">
+                <div class="k">关注主题</div>
+                <div class="v">模型更新 · Agent 产品化 · 企业治理</div>
+              </div>
+              <div class="box">
+                <div class="k">推荐阅读方式</div>
+                <div class="v">先看标题要点，再按分类过滤；最后把高价值文章整理到团队周报。</div>
+              </div>
+              <div class="box">
+                <div class="k">排版说明</div>
+                <div class="v">标题采用 Poppins 提升清晰度；正文采用 Lora 保持阅读节奏与高级感。</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <div class="tiny">
+              交互仅限本地筛选（JS），不会发起任何网络请求。字体优先使用你机器上已安装的 Poppins/Lora，无法命中时使用
+              Google Fonts 作为兜底。
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">
+              <h2>Subscriptions</h2>
+              <div class="meta">示例</div>
+            </div>
+
+            <div class="list">
+              <article data-tags="_">
+                <div class="a-head">
+                  <div>
+                    <div class="tag gray">Digest</div>
+                    <h3>每日摘要</h3>
+                  </div>
+                  <span class="tag gray">08:30</span>
+                </div>
+                <p class="excerpt">每日 3~5 条高信噪比更新，适合团队共享。</p>
+              </article>
+
+              <article data-tags="_">
+                <div class="a-head">
+                  <div>
+                    <div class="tag gray">Weekly</div>
+                    <h3>每周趋势</h3>
+                  </div>
+                  <span class="tag gray">周五</span>
+                </div>
+                <p class="excerpt">按主题汇总：模型、产品、行业与工具链变化。</p>
+              </article>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        function setActive(el) {
+          var chips = document.querySelectorAll('.chip[data-filter]');
+          chips.forEach(function (c) {
+            c.setAttribute('aria-selected', c === el ? 'true' : 'false');
+          });
+        }
+
+        function applyFilter(filter) {
+          var items = document.querySelectorAll('#list article');
+          items.forEach(function (a) {
+            var tags = (a.getAttribute('data-tags') || '').split(/\s+/).filter(Boolean);
+            var show = filter === 'all' ? true : tags.indexOf(filter) !== -1;
+            a.classList.toggle('is-hidden', !show);
+          });
+        }
+
+        document.querySelectorAll('.chip[data-filter]').forEach(function (el) {
+          el.addEventListener('click', function () {
+            var f = el.getAttribute('data-filter') || 'all';
+            setActive(el);
+            applyFilter(f);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
